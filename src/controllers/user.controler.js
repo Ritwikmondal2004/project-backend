@@ -2,7 +2,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/users.model.js";
 import { uploadOnCloudinary } from "../utils/cloudnary.js";
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/apiResponce.js";
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
@@ -15,19 +14,19 @@ const registerUser = asyncHandler(async (req, res) => {
   // check for user creation
   // return res
 
-  const { fullName, email, username, passwored } = req.body;
+  const { fullName, email, username, password } = req.body;
   console.log("email:", email);
 
   if (
-    [fullName, email, username, passwored].some((field) => field?.trim() == "")
+    [fullName, email, username, password].some((field) => field?.trim() == "")
   ) {
-    throw new ApiError(400, "all fields are requered");
+    throw new ApiError(400, "All fields are required");
   }
-  const exitedUSer = await username.findone({
-    $or: [{ username, email }],
+  const existingUser = await User.findOne({
+    $or: [{ username }, { email }],
   });
-  if (exitedUSer) {
-    throw new ApiError(409, "user with email or username alrady exists");
+  if (existingUser) {
+    throw new ApiError(409, "User with email or username already exists");
   }
   console.log(req.files);
 
