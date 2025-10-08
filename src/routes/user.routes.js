@@ -1,17 +1,10 @@
 import { Router } from "express";
 import { registerUser } from "../controllers/user.controler.js";
-import { upload } from "../middlewares/multer.middlewar.js"; // ✅ fixed import name and curly braces
+import { uploadUserImages } from "../middlewares/multer.middlewar.js"; // use the pre-configured fields middleware
 
 const router = Router();
 
 // ✅ attach multer middleware
-router.post(
-  "/register",
-  upload.fields([
-    { name: "avatar", maxCount: 1 },
-    { name: "coverImage", maxCount: 1 },
-  ]),
-  registerUser
-);
+router.post("/register", uploadUserImages, registerUser);
 
 export default router;

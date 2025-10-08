@@ -5,11 +5,21 @@ const storage = multer.diskStorage({
     cb(null, "public/temp/");
   },
   filename: function (req, file, cb) {
-    const safeName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, "_");
-    cb(null, file.fieldname + "-" + Date.now() + "-" + safeName);
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
-export const upload = multer({
-  storage,
-});
+const fileFilter = (req, file, cb) => {
+  const allowed = ["image/jpeg", "image/jpg", "image/png"];
+  if (allowed.includes(file.mimetype)) cb(null, true);
+  else cb(new Error("Only JPG, JPEG and PNG files are allowed"), false);
+};
+
+const upload = multer({ storage, fileFilter });
+
+export const uploadUserImages = upload.fields([
+  { name: "avatar", maxCount: 1 },
+  { name: "coverImage", maxCount: 1 },
+]);
+
+export { upload };
