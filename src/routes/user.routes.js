@@ -8,3 +8,6 @@ const router = Router();
 router.post("/register", uploadUserImages, registerUser);
 
 export default router;
+
+// ✅ attach multer middleware
+router.post("/register", uploadUserImages, registerUser);
