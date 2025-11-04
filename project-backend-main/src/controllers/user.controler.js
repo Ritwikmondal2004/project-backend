@@ -3,7 +3,7 @@ import { ApiError } from "../utils/apiError.js";
 import { User } from "../models/users.model.js";
 import { uploadOnCloudinary } from "../utils/cloudnary.js";
 import { ApiResponse } from "../utils/apiResponce.js";
-import { jwt } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
 //access and referesh token
@@ -193,7 +193,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   // in try catch cash for any error find
   try {
     const decodedToken = jwt.verify(
-      TokenExpiredError,
+      incomingRefreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
 
@@ -213,7 +213,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     };
 
     const { accessToken, newrefreshToken } =
-      await generateAccessAndRefreshToken(user_id);
+      // Fix: Changed user_id to user._id
+      await generateAccessAndRefreshToken(user._id);
 
     return res
       .status(200)
@@ -233,7 +234,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 const changeCurrentPasswored = asyncHandler(async (req, res) => {
   const { oldPassword, newPasswod } = req.body;
-  const user = await User.findById(req.user?._id);
+  const user = await User.findById(req.user?._id).select("password");
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 
   if (!isPasswordCorrect) {
@@ -440,7 +441,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        user[0].getWatchHistory,
+        user[0].watchHistory,
         "watch history fetch sucessfull"
       )
     );
