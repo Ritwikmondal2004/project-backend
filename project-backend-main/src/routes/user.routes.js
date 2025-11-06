@@ -17,6 +17,20 @@ import { verifyJWT } from "../middlewares/authentication.middleware.js";
 
 const router = Router();
 
+router.route("/register").post(
+  upload.fields([
+    {
+      name: "avatar",
+      maxCount: 1,
+    },
+    {
+      name: "coverImage",
+      maxCount: 1,
+    },
+  ]),
+  registerUser
+);
+
 // ✅ attach multer middleware
 router.post("/register", uploadUserImages, registerUser);
 //login
